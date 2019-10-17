@@ -1,7 +1,9 @@
-FROM alpine:%%TAG%%
+FROM vicamo/%%DISTRO%%:%%SUITE%%-%%ARCH%%
 
-RUN apk add --no-cache \
-		ca-certificates
+RUN apt-get update --quiet \
+	&& apt-get install --no-install-recommends --yes \
+		ca-certificates \
+	&& rm -rf /var/lib/apt
 
 # set up nsswitch.conf for Go's "netgo" implementation (which Docker explicitly uses)
 # - https://github.com/docker/docker-ce/blob/v17.09.0-ce/components/engine/hack/make.sh#L149

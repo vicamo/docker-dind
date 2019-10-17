@@ -1,20 +1,15 @@
 #!/bin/bash
 set -eo pipefail
 
-defaultAlpineVersion='3.10'
-declare -A alpineVersion=(
-	#[17.09]='3.6'
-)
-
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 source '.architectures-lib'
 
-versions=( "$@" )
-if [ ${#versions[@]} -eq 0 ]; then
-	versions=( */ )
+flavors=( "$@" )
+if [ ${#flavors[@]} -eq 0 ]; then
+	flavors=( */*/ )
 fi
-versions=( "${versions[@]%/}" )
+flavors=( "${flavors[@]%/}" )
 
 # see http://stackoverflow.com/a/2705678/433558
 sed_escape_lhs() {
@@ -63,66 +58,62 @@ dockerVersions="$(
 		'
 )"
 
+fullVersion="$(grep -v -E -- '-(rc|tp|beta)' <<<"$dockerVersions" | tail -1)"
+version=${fullVersion%.*}
+channel="$(versionChannel "$version")"
+echo "version: $version ($channel)"
+
+debian="$(curl -fsSL 'https://raw.githubusercontent.com/docker-library/official-images/master/library/debian')"
+ubuntu="$(curl -fsSL 'https://raw.githubusercontent.com/docker-library/official-images/master/library/ubuntu')"
+
 travisEnv=
 appveyorEnv=
-for version in "${versions[@]}"; do
-	rcVersion="${version%-rc}"
-
-	versionOptions="$(grep "^$rcVersion[.]" <<<"$dockerVersions")"
-
-	rcGrepV='-v'
-	if [ "$rcVersion" != "$version" ]; then
-		rcGrepV=
+for flavor in "${flavors[@]}"; do
+	suite=${flavor%/*}
+	arch=${flavor#*/}
+	if echo "$debian" | grep -qE "\b${suite}\b"; then
+		distro='debian'
+	elif echo "$ubuntu" | grep -qE "\b${suite}\b"; then
+		distro='ubuntu'
+	else
+		echo >&2 "error: cannot determine repo for '$version'"
+		exit 1
 	fi
 
-	fullVersion="$(grep $rcGrepV -E -- '-(rc|tp|beta)' <<<"$versionOptions" | tail -1)"
-	if [ -z "$fullVersion" ]; then
-		echo >&2 "warning: cannot find full version for $version"
-		continue
-	fi
-
-	channel="$(versionChannel "$version")"
-
-	echo "$version: $fullVersion ($channel)"
-
-	archCase='apkArch="$(apk --print-arch)"; '$'\\\n'
-	archCase+=$'\t''case "$apkArch" in '$'\\\n'
-	for apkArch in $(apkArches); do
-		dockerArch="$(apkToDockerArch "$apkArch")"
+	archCase='dpkgArch="$(dpkg --print-architecture)"; '$'\\\n'
+	archCase+=$'\t''case "$dpkgArch" in '$'\\\n'
+	for dpkgArch in $(dpkgArches); do
+		dockerArch="$(dpkgToDockerArch "$dpkgArch")"
 		# check whether the given architecture is supported for this release
 		if wget --quiet --spider "https://download.docker.com/linux/static/$channel/$dockerArch/docker-$fullVersion.tgz" &> /dev/null; then
-			bashbrewArch="$(apkToBashbrewArch "$apkArch")"
+			bashbrewArch="$(dpkgToBashbrewArch "$dpkgArch")"
 			archCase+="# $bashbrewArch"$'\n'
-			archCase+=$'\t\t'"$apkArch) dockerArch='$dockerArch' ;; "$'\\\n'
+			archCase+=$'\t\t'"$dpkgArch) dockerArch='$dockerArch' ;; "$'\\\n'
 		fi
 	done
-	archCase+=$'\t\t''*) echo >&2 "error: unsupported architecture ($apkArch)"; exit 1 ;;'$'\\\n'
+	archCase+=$'\t\t''*) echo >&2 "error: unsupported architecture ($dpkgArch)"; exit 1 ;;'$'\\\n'
 	archCase+=$'\t''esac'
 
-	alpine="${alpineVersion[$version]:-$defaultAlpineVersion}"
-
-	majorVersion="${fullVersion%%.*}"
-	minorVersion="${fullVersion#$majorVersion.}"
+	majorVersion="${version%%.*}"
+	minorVersion="${version#$majorVersion.}"
 	minorVersion="${minorVersion%%.*}"
 	minorVersion="${minorVersion#0}"
 
 	for variant in \
 		'' git dind dind-rootless \
-		windows/windowsservercore-{1709,ltsc2016} \
 	; do
-		dir="$version${variant:+/$variant}"
+		dir="$flavor${variant:+/$variant}"
 		[ -d "$dir" ] || continue
 		df="$dir/Dockerfile"
 		slash='/'
-		case "$variant" in
-			windows/windowsservercore*) tag="${variant#*-}"; template='Dockerfile-windows-windowsservercore.template' ;;
-			*) tag="$alpine"; template="Dockerfile${variant:+-${variant//$slash/-}}.template" ;;
-		esac
+		template="Dockerfile${variant:+-${variant//$slash/-}}.template"
 		sed -r \
 			-e 's!%%VERSION%%!'"$version"'!g' \
+			-e 's!%%DISTRO%%!'"$distro"'!g' \
+			-e 's!%%SUITE%%!'"$suite"'!g' \
+			-e 's!%%ARCH%%!'"$arch"'!g' \
 			-e 's!%%DOCKER-CHANNEL%%!'"$channel"'!g' \
 			-e 's!%%DOCKER-VERSION%%!'"$fullVersion"'!g' \
-			-e 's!%%TAG%%!'"$tag"'!g' \
 			-e 's!%%DIND-COMMIT%%!'"$dindLatest"'!g' \
 			-e 's!%%ARCH-CASE%%!'"$(sed_escape_rhs "$archCase")"'!g' \
 			"$template" > "$df"
@@ -136,27 +127,13 @@ for version in "${versions[@]}"; do
 		if [ "$majorVersion" -lt 18 ] || { [ "$majorVersion" -eq 18 ] && [ "$minorVersion" -lt 2 ]; }; then
 			sed -ri '/pigz/d' "$df"
 		fi
-
-		if [[ "$variant" == windows/* ]]; then
-			winVariant="$(basename "$variant")"
-
-			case "$winVariant" in
-				*-1709) ;; # no AppVeyor support for 1709 yet: https://github.com/appveyor/ci/issues/1885
-				*) appveyorEnv='\n    - version: '"$version"'\n      variant: '"$winVariant$appveyorEnv" ;;
-			esac
-		fi
 	done
 
-	cp -a docker-entrypoint.sh modprobe.sh "$version/"
-	cp -a dockerd-entrypoint.sh "$version/dind/"
+	cp -a docker-entrypoint.sh modprobe.sh "$flavor/"
+	cp -a dockerd-entrypoint.sh "$flavor/dind/"
 
-	travisEnv='\n  - VERSION='"$version$travisEnv"
+	travisEnv='\n  - VERSION='"$version SUITE=$suite ARCH=$arch$travisEnv"
 done
 
 travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
 echo "$travis" > .travis.yml
-
-if [ -f .appveyor.yml ]; then
-	appveyor="$(awk -v 'RS=\n\n' '$1 == "environment:" { $0 = "environment:\n  matrix:'"$appveyorEnv"'" } { printf "%s%s", $0, RS }' .appveyor.yml)"
-	echo "$appveyor" > .appveyor.yml
-fi

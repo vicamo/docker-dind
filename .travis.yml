@@ -2,15 +2,15 @@ language: bash
 services: docker
 
 env:
-  - VERSION=19.03
+  - VERSION=19.03 SUITE=sid ARCH=amd64
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 
 before_script:
   - env | sort
-  - cd "$VERSION"
-  - image="docker:$VERSION"
+  - cd "$SUITE/$ARCH"
+  - image="vicamo/docker:$VERSION-$SUITE-$ARCH"
 
 script:
   - travis_retry docker build -t "$image" .

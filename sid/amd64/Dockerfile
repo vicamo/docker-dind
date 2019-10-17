@@ -1,7 +1,9 @@
-FROM alpine:3.10
+FROM vicamo/debian:sid-amd64
 
-RUN apk add --no-cache \
-		ca-certificates
+RUN apt-get update --quiet \
+	&& apt-get install --no-install-recommends --yes \
+		ca-certificates \
+	&& rm -rf /var/lib/apt
 
 # set up nsswitch.conf for Go's "netgo" implementation (which Docker explicitly uses)
 # - https://github.com/docker/docker-ce/blob/v17.09.0-ce/components/engine/hack/make.sh#L149
@@ -10,7 +12,7 @@ RUN apk add --no-cache \
 RUN [ ! -e /etc/nsswitch.conf ] && echo 'hosts: files dns' > /etc/nsswitch.conf
 
 ENV DOCKER_CHANNEL stable
-ENV DOCKER_VERSION 19.03.3
+ENV DOCKER_VERSION 19.03.4
 # TODO ENV DOCKER_SHA256
 # https://github.com/docker/docker-ce/blob/5b073ee2cf564edee5adca05eee574142f7627bb/components/packaging/static/hash_files !!
 # (no SHA file artifacts on download.docker.com yet as of 2017-06-07 though)
@@ -18,17 +20,17 @@ ENV DOCKER_VERSION 19.03.3
 RUN set -eux; \
 	\
 # this "case" statement is generated via "update.sh"
-	apkArch="$(apk --print-arch)"; \
-	case "$apkArch" in \
+	dpkgArch="$(dpkg --print-architecture)"; \
+	case "$dpkgArch" in \
 # amd64
-		x86_64) dockerArch='x86_64' ;; \
+		amd64) dockerArch='x86_64' ;; \
 # arm32v6
-		armhf) dockerArch='armel' ;; \
+		armel) dockerArch='armel' ;; \
 # arm32v7
-		armv7) dockerArch='armhf' ;; \
+		armhf) dockerArch='armhf' ;; \
 # arm64v8
-		aarch64) dockerArch='aarch64' ;; \
-		*) echo >&2 "error: unsupported architecture ($apkArch)"; exit 1 ;;\
+		arm64) dockerArch='aarch64' ;; \
+		*) echo >&2 "error: unsupported architecture ($dpkgArch)"; exit 1 ;;\
 	esac; \
 	\
 	if ! wget -O docker.tgz "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/${dockerArch}/docker-${DOCKER_VERSION}.tgz"; then \
