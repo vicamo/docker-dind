@@ -2,7 +2,6 @@ language: bash
 services: docker
 
 env:
-  - VERSION=19.03-rc
   - VERSION=19.03
 
 install:
