@@ -1,15 +1,18 @@
-FROM docker:%%VERSION%%-dind
+FROM vicamo/docker:%%VERSION%%-%%SUITE%%-%%ARCH%%-dind
 
 # busybox "ip" is insufficient:
 #   [rootlesskit:child ] error: executing [[ip tuntap add name tap0 mode tap] [ip link set tap0 address 02:50:00:00:00:01]]: exit status 1
-RUN apk add --no-cache iproute2
+RUN apt-get update --quiet \
+	&& apt-get install --no-install-recommends --yes \
+		iproute2 \
+	&& rm -rf /var/lib/apt
 
 # "/run/user/UID" will be used by default as the value of XDG_RUNTIME_DIR
 RUN mkdir /run/user && chmod 1777 /run/user
 
 # create a default user preconfigured for running rootless dockerd
 RUN set -eux; \
-	adduser -h /home/rootless -g 'Rootless' -D -u 1000 rootless; \
+	adduser --home /home/rootless --gecos 'Rootless' --disabled-password --uid 1000 rootless; \
 	echo 'rootless:100000:65536' >> /etc/subuid; \
 	echo 'rootless:100000:65536' >> /etc/subgid
 
@@ -39,10 +42,12 @@ RUN set -eux; \
 ENV ROOTLESSKIT_VERSION 0.6.0
 
 RUN set -eux; \
-	apk add --no-cache --virtual .rootlesskit-build-deps \
+	apt-get update --quiet; \
+	apt-get install --no-install-recommends --yes \
 		go \
 		libc-dev \
 	; \
+	rm -rf /var/lib/apt; \
 	wget -O rootlesskit.tgz "https://github.com/rootless-containers/rootlesskit/archive/v${ROOTLESSKIT_VERSION}.tar.gz"; \
 	export GOPATH='/go'; mkdir "$GOPATH"; \
 	mkdir -p "$GOPATH/src/github.com/rootless-containers/rootlesskit"; \

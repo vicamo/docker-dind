@@ -1,4 +1,4 @@
-FROM vicamo/docker:%%VERSION%%-%%SUITE%%-%%ARCH%%
+FROM vicamo/docker:19.03-sid-amd64
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \
