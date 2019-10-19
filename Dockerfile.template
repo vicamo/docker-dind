@@ -3,6 +3,7 @@ FROM vicamo/%%DISTRO%%:%%SUITE%%-%%ARCH%%
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \
 		ca-certificates \
+		wget \
 	&& rm -rf /var/lib/apt
 
 ENV DOCKER_CHANNEL %%DOCKER-CHANNEL%%

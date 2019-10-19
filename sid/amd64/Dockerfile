@@ -3,6 +3,7 @@ FROM vicamo/debian:sid-amd64
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \
 		ca-certificates \
+		wget \
 	&& rm -rf /var/lib/apt
 
 ENV DOCKER_CHANNEL stable
