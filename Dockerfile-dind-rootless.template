@@ -21,7 +21,7 @@ RUN set -eux; \
 # this "case" statement is generated via "update.sh"
 	%%ARCH-CASE%%; \
 	\
-	if ! wget -O rootless.tgz "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/${dockerArch}/docker-rootless-extras-${DOCKER_VERSION}.tgz"; then \
+	if ! wget --quiet -O rootless.tgz "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/${dockerArch}/docker-rootless-extras-${DOCKER_VERSION}.tgz"; then \
 		echo >&2 "error: failed to download 'docker-rootless-extras-${DOCKER_VERSION}' from '${DOCKER_CHANNEL}' for '${dockerArch}'"; \
 		exit 1; \
 	fi; \
@@ -48,7 +48,7 @@ RUN set -eux; \
 		libc-dev \
 	; \
 	rm -rf /var/lib/apt; \
-	wget -O rootlesskit.tgz "https://github.com/rootless-containers/rootlesskit/archive/v${ROOTLESSKIT_VERSION}.tar.gz"; \
+	wget --quiet -O rootlesskit.tgz "https://github.com/rootless-containers/rootlesskit/archive/v${ROOTLESSKIT_VERSION}.tar.gz"; \
 	export GOPATH='/go'; mkdir "$GOPATH"; \
 	mkdir -p "$GOPATH/src/github.com/rootless-containers/rootlesskit"; \
 	tar --extract --file rootlesskit.tgz --directory "$GOPATH/src/github.com/rootless-containers/rootlesskit" --strip-components 1; \
