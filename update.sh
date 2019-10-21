@@ -103,7 +103,7 @@ for flavor in "${flavors[@]}"; do
 		'' git dind dind-rootless \
 	; do
 		dir="$flavor${variant:+/$variant}"
-		[ -d "$dir" ] || continue
+		[ -d "$dir" ] || mkdir -p "$dir"
 		df="$dir/Dockerfile"
 		slash='/'
 		template="Dockerfile${variant:+-${variant//$slash/-}}.template"
