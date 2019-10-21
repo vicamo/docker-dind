@@ -11,6 +11,10 @@ before_script:
   - env | sort
   - cd "$SUITE/$ARCH"
   - image="vicamo/docker:$VERSION-$SUITE-$ARCH"
+  - if [ "$ARCH" != "amd64" ]; then
+      docker run --rm --privileged vicamo/binfmt-qemu:bionic;
+      cat /proc/sys/fs/binfmt_misc/qemu-*;
+    fi
 
 script:
   - travis_retry docker build -t "$image" .
