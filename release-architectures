@@ -5,5 +5,5 @@ amd64    amd64    x86_64
 arm32v6  armel    armel
 arm32v7  armhf    armhf
 arm64v8  arm64    aarch64
-ppc64le  ppc64le  ppc64le
+ppc64le  ppc64el  ppc64le
 s390x    s390x    s390x
