@@ -6,6 +6,7 @@ RUN set -eux; \
 	apt-get install --no-install-recommends --yes \
 		btrfs-progs \
 		e2fsprogs \
+		iproute2 \
 		iptables \
 		openssl \
 		uidmap \
