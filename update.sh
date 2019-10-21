@@ -10,6 +10,7 @@ if [ ${#flavors[@]} -eq 0 ]; then
 	flavors=( */*/ )
 fi
 flavors=( "${flavors[@]%/}" )
+flavors=($(IFS=$'\n' sort <<<"${flavors[*]}") )
 
 # see http://stackoverflow.com/a/2705678/433558
 sed_escape_lhs() {
