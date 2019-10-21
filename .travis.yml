@@ -2,7 +2,34 @@ language: bash
 services: docker
 
 env:
+  - VERSION=19.03 SUITE=xenial ARCH=armhf
+  - VERSION=19.03 SUITE=xenial ARCH=arm64
+  - VERSION=19.03 SUITE=xenial ARCH=amd64
+  - VERSION=19.03 SUITE=stretch ARCH=armhf
+  - VERSION=19.03 SUITE=stretch ARCH=armel
+  - VERSION=19.03 SUITE=stretch ARCH=arm64
+  - VERSION=19.03 SUITE=stretch ARCH=amd64
+  - VERSION=19.03 SUITE=sid ARCH=armhf
+  - VERSION=19.03 SUITE=sid ARCH=armel
+  - VERSION=19.03 SUITE=sid ARCH=arm64
   - VERSION=19.03 SUITE=sid ARCH=amd64
+  - VERSION=19.03 SUITE=eoan ARCH=armhf
+  - VERSION=19.03 SUITE=eoan ARCH=arm64
+  - VERSION=19.03 SUITE=eoan ARCH=amd64
+  - VERSION=19.03 SUITE=disco ARCH=armhf
+  - VERSION=19.03 SUITE=disco ARCH=arm64
+  - VERSION=19.03 SUITE=disco ARCH=amd64
+  - VERSION=19.03 SUITE=buster ARCH=armhf
+  - VERSION=19.03 SUITE=buster ARCH=armel
+  - VERSION=19.03 SUITE=buster ARCH=arm64
+  - VERSION=19.03 SUITE=buster ARCH=amd64
+  - VERSION=19.03 SUITE=bullseye ARCH=armhf
+  - VERSION=19.03 SUITE=bullseye ARCH=armel
+  - VERSION=19.03 SUITE=bullseye ARCH=arm64
+  - VERSION=19.03 SUITE=bullseye ARCH=amd64
+  - VERSION=19.03 SUITE=bionic ARCH=armhf
+  - VERSION=19.03 SUITE=bionic ARCH=arm64
+  - VERSION=19.03 SUITE=bionic ARCH=amd64
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
