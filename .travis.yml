@@ -2,7 +2,42 @@ language: bash
 services: docker
 
 env:
+  - VERSION=19.03 SUITE=xenial ARCH=armhf
+  - VERSION=19.03 SUITE=xenial ARCH=arm64
+  - VERSION=19.03 SUITE=xenial ARCH=amd64
+  - VERSION=19.03 SUITE=stretch ARCH=armhf
+  - VERSION=19.03 SUITE=stretch ARCH=armel
+  - VERSION=19.03 SUITE=stretch ARCH=arm64
+  - VERSION=19.03 SUITE=stretch ARCH=amd64
+  - VERSION=19.03 SUITE=sid ARCH=armhf
+  - VERSION=19.03 SUITE=sid ARCH=armel
+  - VERSION=19.03 SUITE=sid ARCH=arm64
   - VERSION=19.03 SUITE=sid ARCH=amd64
+  - VERSION=19.03 SUITE=eoan ARCH=armhf
+  - VERSION=19.03 SUITE=eoan ARCH=arm64
+  - VERSION=19.03 SUITE=eoan ARCH=amd64
+  - VERSION=19.03 SUITE=disco ARCH=armhf
+  - VERSION=19.03 SUITE=disco ARCH=arm64
+  - VERSION=19.03 SUITE=disco ARCH=amd64
+  - VERSION=19.03 SUITE=buster ARCH=armhf
+  - VERSION=19.03 SUITE=buster ARCH=armel
+  - VERSION=19.03 SUITE=buster ARCH=arm64
+  - VERSION=19.03 SUITE=buster ARCH=amd64
+  - VERSION=19.03 SUITE=bullseye ARCH=armhf
+  - VERSION=19.03 SUITE=bullseye ARCH=armel
+  - VERSION=19.03 SUITE=bullseye ARCH=arm64
+  - VERSION=19.03 SUITE=bullseye ARCH=amd64
+  - VERSION=19.03 SUITE=bionic ARCH=armhf
+  - VERSION=19.03 SUITE=bionic ARCH=arm64
+  - VERSION=19.03 SUITE=bionic ARCH=amd64
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    # https://github.com/vicamo/docker-dind/issues/3
+    - env: VERSION=19.03 SUITE=eoan ARCH=armhf
+    # https://github.com/vicamo/docker-dind/issues/3
+    - env: VERSION=19.03 SUITE=disco ARCH=armhf
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
@@ -11,12 +46,18 @@ before_script:
   - env | sort
   - cd "$SUITE/$ARCH"
   - image="vicamo/docker:$VERSION-$SUITE-$ARCH"
+  - if [ "$ARCH" != "amd64" ]; then
+      docker run --rm --privileged vicamo/binfmt-qemu:bionic;
+      cat /proc/sys/fs/binfmt_misc/qemu-*;
+    fi
 
 script:
   - travis_retry docker build -t "$image" .
   - ~/official-images/test/run.sh "$image"
   - travis_retry docker build -t "$image-dind" dind
-  - ~/official-images/test/run.sh "$image-dind"
+  - if [ "$ARCH" == "amd64" ]; then
+      ~/official-images/test/run.sh "$image-dind";
+    fi
   - travis_retry docker build -t "$image-git" git
   - ~/official-images/test/run.sh "$image-git"
 
