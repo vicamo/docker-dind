@@ -31,6 +31,14 @@ env:
   - VERSION=19.03 SUITE=bionic ARCH=arm64
   - VERSION=19.03 SUITE=bionic ARCH=amd64
 
+matrix:
+  fast_finish: true
+  allow_failures:
+    # https://github.com/vicamo/docker-dind/issues/3
+    - env: VERSION=19.03 SUITE=eoan ARCH=armhf
+    # https://github.com/vicamo/docker-dind/issues/3
+    - env: VERSION=19.03 SUITE=disco ARCH=armhf
+
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
 
