@@ -82,6 +82,24 @@ dind:build:buster:armel:
 dind:build:buster:armhf:
   extends: .build-template
 
+dind:build:focal:amd64:
+  extends: .build-template
+
+dind:build:focal:arm64:
+  extends: .build-template
+
+dind:build:focal:armhf:
+  extends: .build-template
+
+dind:build:groovy:amd64:
+  extends: .build-template
+
+dind:build:groovy:arm64:
+  extends: .build-template
+
+dind:build:groovy:armhf:
+  extends: .build-template
+
 dind:build:sid:amd64:
   extends: .build-template
 
@@ -244,6 +262,60 @@ dind:test:buster:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:buster:armhf
+
+dind:test:focal:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: focal
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:focal:amd64
+
+dind:test:focal:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: focal
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:focal:arm64
+
+dind:test:focal:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: focal
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:focal:armhf
+
+dind:test:groovy:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: groovy
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:groovy:amd64
+
+dind:test:groovy:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: groovy
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:groovy:arm64
+
+dind:test:groovy:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: groovy
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:groovy:armhf
 
 dind:test:sid:amd64:
   extends: .test-server-client-template
