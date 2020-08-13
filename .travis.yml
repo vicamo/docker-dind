@@ -1,5 +1,6 @@
 language: bash
 services: docker
+dist: focal
 
 env:
   - VERSION=19.03 SUITE=xenial ARCH=armhf
@@ -47,7 +48,7 @@ before_script:
   - cd "$SUITE/$ARCH"
   - image="vicamo/docker:$VERSION-$SUITE-$ARCH"
   - if [ "$ARCH" != "amd64" ]; then
-      docker run --rm --privileged vicamo/binfmt-qemu:bionic;
+      docker run --rm --privileged vicamo/binfmt-qemu:focal;
       cat /proc/sys/fs/binfmt_misc/qemu-*;
     fi
 
