@@ -1,5 +1,6 @@
 language: bash
 services: docker
+dist: bionic
 
 env:
   - VERSION=19.03 SUITE=xenial ARCH=armhf
