@@ -8,6 +8,7 @@ RUN set -eux; \
 		e2fsprogs \
 		iproute2 \
 		iptables \
+		kmod \
 		openssl \
 		uidmap \
 		xfsprogs \
