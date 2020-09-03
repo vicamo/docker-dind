@@ -1,4 +1,6 @@
-FROM vicamo/ubuntu:xenial-armhf
+ARG BASE_IMAGE=vicamo/ubuntu:xenial-armhf
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

@@ -1,4 +1,6 @@
-FROM vicamo/debian:bullseye-armel
+ARG BASE_IMAGE=vicamo/debian:bullseye-armel
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

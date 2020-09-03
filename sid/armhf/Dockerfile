@@ -1,4 +1,6 @@
-FROM vicamo/debian:sid-armhf
+ARG BASE_IMAGE=vicamo/debian:sid-armhf
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

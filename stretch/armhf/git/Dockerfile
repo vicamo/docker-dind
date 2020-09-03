@@ -1,4 +1,6 @@
-FROM vicamo/docker:19.03-stretch-armhf
+ARG BASE_IMAGE=vicamo/docker:19.03-stretch-armhf
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

@@ -1,4 +1,6 @@
-FROM vicamo/docker:19.03-stretch-amd64
+ARG BASE_IMAGE=vicamo/docker:19.03-stretch-amd64
+
+FROM ${BASE_IMAGE}
 
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#runtime-dependencies
 RUN set -eux; \

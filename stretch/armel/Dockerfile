@@ -1,4 +1,6 @@
-FROM vicamo/debian:stretch-armel
+ARG BASE_IMAGE=vicamo/debian:stretch-armel
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

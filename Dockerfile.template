@@ -1,4 +1,6 @@
-FROM vicamo/%%DISTRO%%:%%SUITE%%-%%ARCH%%
+ARG BASE_IMAGE=vicamo/%%DISTRO%%:%%SUITE%%-%%ARCH%%
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

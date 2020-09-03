@@ -1,4 +1,6 @@
-FROM vicamo/docker:%%VERSION%%-%%SUITE%%-%%ARCH%%
+ARG BASE_IMAGE=vicamo/docker:%%VERSION%%-%%SUITE%%-%%ARCH%%
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

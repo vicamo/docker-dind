@@ -1,4 +1,6 @@
-FROM vicamo/debian:sid-armel
+ARG BASE_IMAGE=vicamo/debian:sid-armel
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

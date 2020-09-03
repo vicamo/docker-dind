@@ -1,4 +1,6 @@
-FROM vicamo/debian:buster-armel
+ARG BASE_IMAGE=vicamo/debian:buster-armel
+
+FROM ${BASE_IMAGE}
 
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \

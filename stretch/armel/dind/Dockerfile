@@ -1,4 +1,6 @@
-FROM vicamo/docker:19.03-stretch-armel
+ARG BASE_IMAGE=vicamo/docker:19.03-stretch-armel
+
+FROM ${BASE_IMAGE}
 
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#runtime-dependencies
 RUN set -eux; \

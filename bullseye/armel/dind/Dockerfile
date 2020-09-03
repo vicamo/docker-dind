@@ -1,4 +1,6 @@
-FROM vicamo/docker:19.03-bullseye-armel
+ARG BASE_IMAGE=vicamo/docker:19.03-bullseye-armel
+
+FROM ${BASE_IMAGE}
 
 # https://github.com/docker/docker/blob/master/project/PACKAGERS.md#runtime-dependencies
 RUN set -eux; \
