@@ -4,6 +4,7 @@ variables:
 
 stages:
   - build
+  - test
   - deploy
   - cleanup
 
@@ -63,6 +64,9 @@ dind:build:bullseye:amd64:
 dind:build:bullseye:arm64:
   extends: .build-template
 
+dind:build:bullseye:armel:
+  extends: .build-template
+
 dind:build:bullseye:armhf:
   extends: .build-template
 
@@ -70,6 +74,9 @@ dind:build:buster:amd64:
   extends: .build-template
 
 dind:build:buster:arm64:
+  extends: .build-template
+
+dind:build:buster:armel:
   extends: .build-template
 
 dind:build:buster:armhf:
@@ -81,10 +88,10 @@ dind:build:sid:amd64:
 dind:build:sid:arm64:
   extends: .build-template
 
-dind:build:sid:armhf:
+dind:build:sid:armel:
   extends: .build-template
 
-dind:build:sid:armel:
+dind:build:sid:armhf:
   extends: .build-template
 
 dind:build:stretch:amd64:
@@ -93,10 +100,10 @@ dind:build:stretch:amd64:
 dind:build:stretch:arm64:
   extends: .build-template
 
-dind:build:stretch:armhf:
+dind:build:stretch:armel:
   extends: .build-template
 
-dind:build:stretch:armel:
+dind:build:stretch:armhf:
   extends: .build-template
 
 dind:build:xenial:amd64:
@@ -107,6 +114,235 @@ dind:build:xenial:arm64:
 
 dind:build:xenial:armhf:
   extends: .build-template
+
+.test-base-template: &test-base-template
+  stage: test
+  image: ${DIND_STAGING_IMAGE_PREFIX}${JOB_VERSION}-${JOB_SERIES}-${JOB_ARCH}
+  variables:
+    GIT_STRATEGY: none
+    # JOB_VERSION:
+    # JOB_SERIES:
+    # JOB_ARCH:
+  before_script:
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+  script:
+    - docker info
+    - docker run --detach --rm --tty --name alpine alpine
+    - docker inspect alpine
+    - docker stop alpine
+
+.test-server-client-template: &test-server-client-template
+  services:
+    - name: ${DIND_STAGING_IMAGE_PREFIX}${JOB_VERSION}-${JOB_SERIES}-${JOB_ARCH}-dind
+      alias: docker
+  extends: .test-base-template
+
+# It's impossible to run dind with qemu, so test only clients for foreign
+# architectures:
+#
+#iptables failed: iptables -t nat -N DOCKER: iptables v1.6.1: can't initialize iptables table `nat': iptables who? (do you need to insmod?)
+.test-client-template: &test-client-template
+  services:
+    - docker:dind
+  extends: .test-base-template
+
+dind:test:bionic:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: bionic
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:bionic:amd64
+
+dind:test:bionic:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: bionic
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:bionic:arm64
+
+dind:test:bionic:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: bionic
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:bionic:armhf
+
+dind:test:bullseye:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: bullseye
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:bullseye:amd64
+
+dind:test:bullseye:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: bullseye
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:bullseye:arm64
+
+dind:test:bullseye:armel:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: bullseye
+    JOB_ARCH: armel
+  needs:
+    - dind:build:bullseye:armel
+
+dind:test:bullseye:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: bullseye
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:bullseye:armhf
+
+dind:test:buster:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: buster
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:buster:amd64
+
+dind:test:buster:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: buster
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:buster:arm64
+
+dind:test:buster:armel:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: buster
+    JOB_ARCH: armel
+  needs:
+    - dind:build:buster:armel
+
+dind:test:buster:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: buster
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:buster:armhf
+
+dind:test:sid:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: sid
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:sid:amd64
+
+dind:test:sid:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: sid
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:sid:arm64
+
+dind:test:sid:armel:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: sid
+    JOB_ARCH: armel
+  needs:
+    - dind:build:sid:armel
+
+dind:test:sid:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: sid
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:sid:armhf
+
+dind:test:stretch:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: stretch
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:stretch:amd64
+
+dind:test:stretch:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: stretch
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:stretch:arm64
+
+dind:test:stretch:armel:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: stretch
+    JOB_ARCH: armel
+  needs:
+    - dind:build:stretch:armel
+
+dind:test:stretch:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: stretch
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:stretch:armhf
+
+dind:test:xenial:amd64:
+  extends: .test-server-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: xenial
+    JOB_ARCH: amd64
+  needs:
+    - dind:build:xenial:amd64
+
+dind:test:xenial:arm64:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: xenial
+    JOB_ARCH: arm64
+  needs:
+    - dind:build:xenial:arm64
+
+dind:test:xenial:armhf:
+  extends: .test-client-template
+  variables:
+    JOB_VERSION: 19.03.4
+    JOB_SERIES: xenial
+    JOB_ARCH: armhf
+  needs:
+    - dind:build:xenial:armhf
 
 dind:deploy:
   stage: deploy
