@@ -1,0 +1,202 @@
+variables:
+  DIND_STAGING_IMAGE_PREFIX: "${CI_REGISTRY_IMAGE}/staging:${CI_PIPELINE_ID}-"
+  DIND_IMAGE_PREFIX: "${CI_REGISTRY_IMAGE}/docker:"
+
+stages:
+  - build
+  - deploy
+  - cleanup
+
+.build-template: &build-template
+  stage: build
+  image: docker:git
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+    - git clone https://github.com/docker-library/official-images.git "${CI_BUILDS_DIR}/official-images"
+  script:
+    - |
+      export JOB_SERIES=$(echo "${CI_JOB_NAME}" | cut -d: -f3)
+      export JOB_ARCH=$(echo "${CI_JOB_NAME}" | cut -d: -f4)
+      export JOB_FLAVOR="${JOB_SERIES}-${JOB_ARCH}"
+      export JOB_DIR="${JOB_SERIES}/${JOB_ARCH}"
+      export JOB_VERSION=$(cat "${JOB_DIR}/Dockerfile" | awk '/^ENV DOCKER_VERSION/ { print $3 }')
+      export JOB_IMAGE=${JOB_VERSION}-${JOB_SERIES}-${JOB_ARCH}
+
+    - mkdir -p "output/jobs/${CI_JOB_NAME}"
+    - apk update && apk add bash
+    - |
+      for which in "" dind git; do
+        if [ -n "${which}" ]; then
+          base_image="${DIND_STAGING_IMAGE_PREFIX}${JOB_IMAGE}"
+        else
+          base_image=
+        fi
+        image="${DIND_STAGING_IMAGE_PREFIX}${JOB_IMAGE}${which:+-${which}}"
+        docker build ${base_image:+--build-arg BASE_IMAGE="${base_image}"} --tag "${image}" "${JOB_DIR}${which:+/${which}}"
+        if [ "${which}" != "dind" ] || [ "${JOB_ARCH}" = "amd64" ]; then
+          "${CI_BUILDS_DIR}"/official-images/test/run.sh "${image}"
+        fi
+      done
+    - for which in "" dind git; do
+        docker push "${DIND_STAGING_IMAGE_PREFIX}${JOB_IMAGE}${which:+-${which}}";
+        echo "${JOB_IMAGE}${which:+-${which}}" >> "output/jobs/${CI_JOB_NAME}/.built-images";
+      done
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - "output/jobs/${CI_JOB_NAME}"
+
+dind:build:bionic:amd64:
+  extends: .build-template
+
+dind:build:bionic:arm64:
+  extends: .build-template
+
+dind:build:bionic:armhf:
+  extends: .build-template
+
+dind:build:bullseye:amd64:
+  extends: .build-template
+
+dind:build:bullseye:arm64:
+  extends: .build-template
+
+dind:build:bullseye:armhf:
+  extends: .build-template
+
+dind:build:buster:amd64:
+  extends: .build-template
+
+dind:build:buster:arm64:
+  extends: .build-template
+
+dind:build:buster:armhf:
+  extends: .build-template
+
+dind:build:sid:amd64:
+  extends: .build-template
+
+dind:build:sid:arm64:
+  extends: .build-template
+
+dind:build:sid:armhf:
+  extends: .build-template
+
+dind:build:sid:armel:
+  extends: .build-template
+
+dind:build:stretch:amd64:
+  extends: .build-template
+
+dind:build:stretch:arm64:
+  extends: .build-template
+
+dind:build:stretch:armhf:
+  extends: .build-template
+
+dind:build:stretch:armel:
+  extends: .build-template
+
+dind:build:xenial:amd64:
+  extends: .build-template
+
+dind:build:xenial:arm64:
+  extends: .build-template
+
+dind:build:xenial:armhf:
+  extends: .build-template
+
+dind:deploy:
+  stage: deploy
+  image: docker:git
+  services:
+    - docker:dind
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - docker login -u "${CI_REGISTRY_USER}" -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+    - if [ -n "${DOCKER_USER}" ]; then
+        cat "${DOCKER_PASS}" | base64 -d |
+            docker login --username "${DOCKER_USER}" --password-stdin ${DOCKER_SERVER};
+      fi
+  script:
+    - export DOCKER_REPO=${DOCKER_REPO:-${DIND_IMAGE_PREFIX}}
+    - |
+      for which in $(cat "${CI_PROJECT_DIR}"/output/jobs/*/.built-images); do
+        staging_image="${DIND_STAGING_IMAGE_PREFIX}${which}"
+        docker pull "${staging_image}"
+
+        version=$(echo "${which}" | cut -d- -f1)
+        series=$(echo "${which}" | cut -d- -f2)
+        arch=$(echo "${which}" | cut -d- -f3)
+        remains=$(echo "${which}" | cut -d- -f4-)
+
+        aliases=$(eval echo \${aliases_${series}})
+        if test -z "$aliases"; then
+          aliases="${series}"
+
+          docker run --detach --rm --init --name staging --entrypoint /bin/sleep "${staging_image}" 1d
+          docker exec staging apt-get update --quiet
+          docker exec staging apt-get install --no-install-recommends --yes lsb-release
+
+          if (docker exec staging lsb_release --description --short 2>/dev/null | grep development); then
+            aliases="${aliases} devel"
+          fi
+
+          release=$(docker exec staging lsb_release --release --short 2>/dev/null)
+          aliases="${aliases} ${release}"
+
+          eval "aliases_${series}='${aliases}'"
+
+          docker stop staging
+          while (docker ps -a | grep staging); do
+            sleep 3;
+          done
+        fi
+
+        tags=
+        for alias in ${aliases}; do
+          tags="${tags} ${version}-${alias}-${arch}${remains:+-${remains}}"
+          tags="${tags} ${alias}-${arch}${remains:+-${remains}}"
+        done
+        if [ "${arch}" = "amd64" ]; then
+          for alias in ${aliases}; do
+            tags="${tags} ${version}-${alias}${remains:+-${remains}}"
+            tags="${tags} ${alias}${remains:+-${remains}}"
+          done
+        fi
+
+        echo "===== Tagging ${staging_image} as ${tags} ====="
+        for tag in ${tags}; do
+          tag="${DOCKER_REPO}${tag}"
+          docker tag "${staging_image}" "${tag}"
+          docker push "${tag}"
+          docker rmi "${tag}"
+        done
+        docker rmi "${staging_image}"
+      done
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+dind:cleanup:
+  stage: cleanup
+  image: docker
+  services:
+    - docker:dind
+  variables:
+    GIT_STRATEGY: none
+    REG_SHA256: ade837fc5224acd8c34732bf54a94f579b47851cc6a7fd5899a98386b782e228
+    REG_VERSION: 0.16.1
+  before_script:
+    - apk add --no-cache curl
+    - curl --fail --show-error --location "https://github.com/genuinetools/reg/releases/download/v${REG_VERSION}/reg-linux-amd64" --output /usr/local/bin/reg
+    - echo "${REG_SHA256}  /usr/local/bin/reg" | sha256sum -c -
+    - chmod a+x /usr/local/bin/reg
+  script:
+    - for which in $(cat "${CI_PROJECT_DIR}"/output/jobs/*/.built-images); do
+        /usr/local/bin/reg rm -d --auth-url "${CI_REGISTRY}" -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${DIND_STAGING_IMAGE_PREFIX}${which}" || true;
+      done
+  rules:
+    - when: always
