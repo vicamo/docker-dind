@@ -168,6 +168,7 @@ dind:build:xenial:armhf:
   before_script:
     - docker login -u "${CI_REGISTRY_USER}" -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
   script:
+    - test "${DOCKER_VERSION}" = "${JOB_VERSION}"
     - docker info
     - docker run --detach --rm --tty --name alpine alpine
     - docker inspect alpine
