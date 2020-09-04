@@ -52,7 +52,7 @@ RUN set -eux; \
 	vpnkit --version
 
 # https://github.com/rootless-containers/rootlesskit/releases
-ENV ROOTLESSKIT_VERSION 0.9.1
+ENV ROOTLESSKIT_VERSION 0.10.0
 
 RUN set -eux; \
 	apt-get update --quiet; \
