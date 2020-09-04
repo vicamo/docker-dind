@@ -5,12 +5,14 @@ FROM ${BASE_IMAGE}
 RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \
 		ca-certificates \
+# DOCKER_HOST=ssh://... -- https://github.com/docker/cli/pull/1014
+		openssh-client \
 		wget \
 	&& (ls /etc/ssl/certs/*.0 || c_rehash) \
 	&& rm -rf /var/lib/apt
 
 ENV DOCKER_CHANNEL stable
-ENV DOCKER_VERSION 19.03.4
+ENV DOCKER_VERSION 19.03.5
 # TODO ENV DOCKER_SHA256
 # https://github.com/docker/docker-ce/blob/5b073ee2cf564edee5adca05eee574142f7627bb/components/packaging/static/hash_files !!
 # (no SHA file artifacts on download.docker.com yet as of 2017-06-07 though)
