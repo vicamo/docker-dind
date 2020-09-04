@@ -36,9 +36,7 @@ stages:
         fi
         image="${DIND_STAGING_IMAGE_PREFIX}${JOB_IMAGE}${which:+-${which}}"
         docker build ${base_image:+--build-arg BASE_IMAGE="${base_image}"} --tag "${image}" "${JOB_DIR}${which:+/${which}}"
-        if [ "${which}" != "dind" ] || [ "${JOB_ARCH}" = "amd64" ]; then
-          "${CI_BUILDS_DIR}"/official-images/test/run.sh "${image}"
-        fi
+        "${CI_BUILDS_DIR}"/official-images/test/run.sh "${image}"
       done
     - for which in "" dind git; do
         docker push "${DIND_STAGING_IMAGE_PREFIX}${JOB_IMAGE}${which:+-${which}}";
