@@ -57,6 +57,8 @@ dind:build:bionic:arm64:
 
 dind:build:bionic:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:bullseye:amd64:
   extends: .build-template
@@ -66,9 +68,13 @@ dind:build:bullseye:arm64:
 
 dind:build:bullseye:armel:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:bullseye:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:buster:amd64:
   extends: .build-template
@@ -78,9 +84,13 @@ dind:build:buster:arm64:
 
 dind:build:buster:armel:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:buster:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:focal:amd64:
   extends: .build-template
@@ -90,6 +100,8 @@ dind:build:focal:arm64:
 
 dind:build:focal:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:groovy:amd64:
   extends: .build-template
@@ -99,6 +111,8 @@ dind:build:groovy:arm64:
 
 dind:build:groovy:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:sid:amd64:
   extends: .build-template
@@ -108,9 +122,13 @@ dind:build:sid:arm64:
 
 dind:build:sid:armel:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:sid:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:stretch:amd64:
   extends: .build-template
@@ -120,9 +138,13 @@ dind:build:stretch:arm64:
 
 dind:build:stretch:armel:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:stretch:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:build:xenial:amd64:
   extends: .build-template
@@ -132,6 +154,8 @@ dind:build:xenial:arm64:
 
 dind:build:xenial:armhf:
   extends: .build-template
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 .test-base-template: &test-base-template
   stage: test
@@ -190,6 +214,8 @@ dind:test:bionic:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:bionic:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:bullseye:amd64:
   extends: .test-server-client-template
@@ -217,6 +243,8 @@ dind:test:bullseye:armel:
     JOB_ARCH: armel
   needs:
     - dind:build:bullseye:armel
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:bullseye:armhf:
   extends: .test-client-template
@@ -226,6 +254,8 @@ dind:test:bullseye:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:bullseye:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:buster:amd64:
   extends: .test-server-client-template
@@ -253,6 +283,8 @@ dind:test:buster:armel:
     JOB_ARCH: armel
   needs:
     - dind:build:buster:armel
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:buster:armhf:
   extends: .test-client-template
@@ -262,6 +294,8 @@ dind:test:buster:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:buster:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:focal:amd64:
   extends: .test-server-client-template
@@ -289,6 +323,8 @@ dind:test:focal:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:focal:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:groovy:amd64:
   extends: .test-server-client-template
@@ -316,6 +352,8 @@ dind:test:groovy:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:groovy:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:sid:amd64:
   extends: .test-server-client-template
@@ -343,6 +381,8 @@ dind:test:sid:armel:
     JOB_ARCH: armel
   needs:
     - dind:build:sid:armel
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:sid:armhf:
   extends: .test-client-template
@@ -352,6 +392,8 @@ dind:test:sid:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:sid:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:stretch:amd64:
   extends: .test-server-client-template
@@ -379,6 +421,8 @@ dind:test:stretch:armel:
     JOB_ARCH: armel
   needs:
     - dind:build:stretch:armel
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:stretch:armhf:
   extends: .test-client-template
@@ -388,6 +432,8 @@ dind:test:stretch:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:stretch:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:test:xenial:amd64:
   extends: .test-server-client-template
@@ -415,6 +461,8 @@ dind:test:xenial:armhf:
     JOB_ARCH: armhf
   needs:
     - dind:build:xenial:armhf
+  # https://github.com/vicamo/docker-dind/issues/5
+  allow_failure: true
 
 dind:deploy:
   stage: deploy
