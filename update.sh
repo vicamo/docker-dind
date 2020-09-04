@@ -67,8 +67,6 @@ echo "version: $version ($channel)"
 debian="$(curl -fsSL 'https://raw.githubusercontent.com/docker-library/official-images/master/library/debian')"
 ubuntu="$(curl -fsSL 'https://raw.githubusercontent.com/docker-library/official-images/master/library/ubuntu')"
 
-travisEnv=
-appveyorEnv=
 for flavor in "${flavors[@]}"; do
 	suite=${flavor%/*}
 	arch=${flavor#*/}
@@ -132,9 +130,4 @@ for flavor in "${flavors[@]}"; do
 
 	cp -a docker-entrypoint.sh modprobe.sh "$flavor/"
 	cp -a dockerd-entrypoint.sh "$flavor/dind/"
-
-	travisEnv='\n  - VERSION='"$version SUITE=$suite ARCH=$arch$travisEnv"
 done
-
-travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
-echo "$travis" > .travis.yml
