@@ -172,7 +172,7 @@ dind:build:xenial:armhf:
     - docker inspect alpine
     - docker stop alpine
 
-.test-server-client-template: &test-server-client-template
+.test-dind-template: &test-dind-template
   services:
     - name: ${DIND_STAGING_IMAGE_PREFIX}${JOB_VERSION}-${JOB_SERIES}-${JOB_ARCH}-dind
       alias: docker
@@ -188,7 +188,7 @@ dind:build:xenial:armhf:
   extends: .test-base-template
 
 dind:test:bionic:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: bionic
@@ -196,7 +196,7 @@ dind:test:bionic:amd64:
   needs:
     - dind:build:bionic:amd64
 
-dind:test:bionic:arm64:
+client:test:bionic:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -205,7 +205,7 @@ dind:test:bionic:arm64:
   needs:
     - dind:build:bionic:arm64
 
-dind:test:bionic:armhf:
+client:test:bionic:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -217,7 +217,7 @@ dind:test:bionic:armhf:
   allow_failure: true
 
 dind:test:bullseye:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: bullseye
@@ -225,7 +225,7 @@ dind:test:bullseye:amd64:
   needs:
     - dind:build:bullseye:amd64
 
-dind:test:bullseye:arm64:
+client:test:bullseye:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -234,7 +234,7 @@ dind:test:bullseye:arm64:
   needs:
     - dind:build:bullseye:arm64
 
-dind:test:bullseye:armel:
+client:test:bullseye:armel:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -245,7 +245,7 @@ dind:test:bullseye:armel:
   # https://github.com/vicamo/docker-dind/issues/5
   allow_failure: true
 
-dind:test:bullseye:armhf:
+client:test:bullseye:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -257,7 +257,7 @@ dind:test:bullseye:armhf:
   allow_failure: true
 
 dind:test:buster:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: buster
@@ -265,7 +265,7 @@ dind:test:buster:amd64:
   needs:
     - dind:build:buster:amd64
 
-dind:test:buster:arm64:
+client:test:buster:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -274,7 +274,7 @@ dind:test:buster:arm64:
   needs:
     - dind:build:buster:arm64
 
-dind:test:buster:armel:
+client:test:buster:armel:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -285,7 +285,7 @@ dind:test:buster:armel:
   # https://github.com/vicamo/docker-dind/issues/5
   allow_failure: true
 
-dind:test:buster:armhf:
+client:test:buster:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -297,7 +297,7 @@ dind:test:buster:armhf:
   allow_failure: true
 
 dind:test:focal:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: focal
@@ -305,7 +305,7 @@ dind:test:focal:amd64:
   needs:
     - dind:build:focal:amd64
 
-dind:test:focal:arm64:
+client:test:focal:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -314,7 +314,7 @@ dind:test:focal:arm64:
   needs:
     - dind:build:focal:arm64
 
-dind:test:focal:armhf:
+client:test:focal:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -326,7 +326,7 @@ dind:test:focal:armhf:
   allow_failure: true
 
 dind:test:groovy:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: groovy
@@ -334,7 +334,7 @@ dind:test:groovy:amd64:
   needs:
     - dind:build:groovy:amd64
 
-dind:test:groovy:arm64:
+client:test:groovy:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -343,7 +343,7 @@ dind:test:groovy:arm64:
   needs:
     - dind:build:groovy:arm64
 
-dind:test:groovy:armhf:
+client:test:groovy:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -355,7 +355,7 @@ dind:test:groovy:armhf:
   allow_failure: true
 
 dind:test:sid:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: sid
@@ -363,7 +363,7 @@ dind:test:sid:amd64:
   needs:
     - dind:build:sid:amd64
 
-dind:test:sid:arm64:
+client:test:sid:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -372,7 +372,7 @@ dind:test:sid:arm64:
   needs:
     - dind:build:sid:arm64
 
-dind:test:sid:armel:
+client:test:sid:armel:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -383,7 +383,7 @@ dind:test:sid:armel:
   # https://github.com/vicamo/docker-dind/issues/5
   allow_failure: true
 
-dind:test:sid:armhf:
+client:test:sid:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -395,7 +395,7 @@ dind:test:sid:armhf:
   allow_failure: true
 
 dind:test:stretch:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: stretch
@@ -403,7 +403,7 @@ dind:test:stretch:amd64:
   needs:
     - dind:build:stretch:amd64
 
-dind:test:stretch:arm64:
+client:test:stretch:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -412,7 +412,7 @@ dind:test:stretch:arm64:
   needs:
     - dind:build:stretch:arm64
 
-dind:test:stretch:armel:
+client:test:stretch:armel:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -423,7 +423,7 @@ dind:test:stretch:armel:
   # https://github.com/vicamo/docker-dind/issues/5
   allow_failure: true
 
-dind:test:stretch:armhf:
+client:test:stretch:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -435,7 +435,7 @@ dind:test:stretch:armhf:
   allow_failure: true
 
 dind:test:xenial:amd64:
-  extends: .test-server-client-template
+  extends: .test-dind-template
   variables:
     JOB_VERSION: 19.03.12
     JOB_SERIES: xenial
@@ -443,7 +443,7 @@ dind:test:xenial:amd64:
   needs:
     - dind:build:xenial:amd64
 
-dind:test:xenial:arm64:
+client:test:xenial:arm64:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
@@ -452,7 +452,7 @@ dind:test:xenial:arm64:
   needs:
     - dind:build:xenial:arm64
 
-dind:test:xenial:armhf:
+client:test:xenial:armhf:
   extends: .test-client-template
   variables:
     JOB_VERSION: 19.03.12
