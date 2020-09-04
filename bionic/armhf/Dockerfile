@@ -6,6 +6,7 @@ RUN apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes \
 		ca-certificates \
 		wget \
+	&& (ls /etc/ssl/certs/*.0 || c_rehash) \
 	&& rm -rf /var/lib/apt
 
 ENV DOCKER_CHANNEL stable
