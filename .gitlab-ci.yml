@@ -191,7 +191,7 @@ dind:build:xenial:armhf:
 dind:test:bionic:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: bionic
     JOB_ARCH: amd64
   needs:
@@ -200,7 +200,7 @@ dind:test:bionic:amd64:
 dind:test:bionic:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: bionic
     JOB_ARCH: arm64
   needs:
@@ -209,7 +209,7 @@ dind:test:bionic:arm64:
 dind:test:bionic:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: bionic
     JOB_ARCH: armhf
   needs:
@@ -220,7 +220,7 @@ dind:test:bionic:armhf:
 dind:test:bullseye:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: bullseye
     JOB_ARCH: amd64
   needs:
@@ -229,7 +229,7 @@ dind:test:bullseye:amd64:
 dind:test:bullseye:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: bullseye
     JOB_ARCH: arm64
   needs:
@@ -238,7 +238,7 @@ dind:test:bullseye:arm64:
 dind:test:bullseye:armel:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: bullseye
     JOB_ARCH: armel
   needs:
@@ -249,7 +249,7 @@ dind:test:bullseye:armel:
 dind:test:bullseye:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: bullseye
     JOB_ARCH: armhf
   needs:
@@ -260,7 +260,7 @@ dind:test:bullseye:armhf:
 dind:test:buster:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: buster
     JOB_ARCH: amd64
   needs:
@@ -269,7 +269,7 @@ dind:test:buster:amd64:
 dind:test:buster:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: buster
     JOB_ARCH: arm64
   needs:
@@ -278,7 +278,7 @@ dind:test:buster:arm64:
 dind:test:buster:armel:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: buster
     JOB_ARCH: armel
   needs:
@@ -289,7 +289,7 @@ dind:test:buster:armel:
 dind:test:buster:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: buster
     JOB_ARCH: armhf
   needs:
@@ -300,7 +300,7 @@ dind:test:buster:armhf:
 dind:test:focal:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: focal
     JOB_ARCH: amd64
   needs:
@@ -309,7 +309,7 @@ dind:test:focal:amd64:
 dind:test:focal:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: focal
     JOB_ARCH: arm64
   needs:
@@ -318,7 +318,7 @@ dind:test:focal:arm64:
 dind:test:focal:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: focal
     JOB_ARCH: armhf
   needs:
@@ -329,7 +329,7 @@ dind:test:focal:armhf:
 dind:test:groovy:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: groovy
     JOB_ARCH: amd64
   needs:
@@ -338,7 +338,7 @@ dind:test:groovy:amd64:
 dind:test:groovy:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: groovy
     JOB_ARCH: arm64
   needs:
@@ -347,7 +347,7 @@ dind:test:groovy:arm64:
 dind:test:groovy:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: groovy
     JOB_ARCH: armhf
   needs:
@@ -358,7 +358,7 @@ dind:test:groovy:armhf:
 dind:test:sid:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: sid
     JOB_ARCH: amd64
   needs:
@@ -367,7 +367,7 @@ dind:test:sid:amd64:
 dind:test:sid:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: sid
     JOB_ARCH: arm64
   needs:
@@ -376,7 +376,7 @@ dind:test:sid:arm64:
 dind:test:sid:armel:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: sid
     JOB_ARCH: armel
   needs:
@@ -387,7 +387,7 @@ dind:test:sid:armel:
 dind:test:sid:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: sid
     JOB_ARCH: armhf
   needs:
@@ -398,7 +398,7 @@ dind:test:sid:armhf:
 dind:test:stretch:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: stretch
     JOB_ARCH: amd64
   needs:
@@ -407,7 +407,7 @@ dind:test:stretch:amd64:
 dind:test:stretch:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: stretch
     JOB_ARCH: arm64
   needs:
@@ -416,7 +416,7 @@ dind:test:stretch:arm64:
 dind:test:stretch:armel:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: stretch
     JOB_ARCH: armel
   needs:
@@ -427,7 +427,7 @@ dind:test:stretch:armel:
 dind:test:stretch:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: stretch
     JOB_ARCH: armhf
   needs:
@@ -438,7 +438,7 @@ dind:test:stretch:armhf:
 dind:test:xenial:amd64:
   extends: .test-server-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: xenial
     JOB_ARCH: amd64
   needs:
@@ -447,7 +447,7 @@ dind:test:xenial:amd64:
 dind:test:xenial:arm64:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: xenial
     JOB_ARCH: arm64
   needs:
@@ -456,7 +456,7 @@ dind:test:xenial:arm64:
 dind:test:xenial:armhf:
   extends: .test-client-template
   variables:
-    JOB_VERSION: 19.03.9
+    JOB_VERSION: 19.03.10
     JOB_SERIES: xenial
     JOB_ARCH: armhf
   needs:
